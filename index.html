@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="initial-scale=1" />
-  <title>The globe of extremes</title>
+  <title>OpenCortex.ai</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.12/esri/themes/light/main.css" />
   <link rel="stylesheet" href="./style.css" />
@@ -60,20 +60,20 @@
         alphaCompositingEnabled: true,
         qualityProfile: "high",
         camera: {
-          position: [-55.03975781, 14.94826384, 19921223.30821],
+          position: [-55.03975781, 14.94826384, 21921223.30821],
           heading: 2.03,
           tilt: 0.13
         },
         environment: {
           background: {
             type: "color",
-            color: [255, 252, 244, 0]
+            color: [0, 39, 141, 0.95]
           },
-          starsEnabled: false,
+          starsEnabled: true,
           atmosphereEnabled: false,
           lighting: {
             directShadowsEnabled: false,
-            date: "Sun Jun 23 2019 19:19:18 GMT+0200 (Central European Summer Time)"
+            date: "Mon Jun 21 2021 19:18:47 GMT+0200 (Central European Summer Time)"
           }
         },
         constraints: {
@@ -92,16 +92,35 @@
           collapseEnabled: false
         },
         highlightOptions: {
-          color: [255, 255, 255],
-          haloOpacity: 0.5
+          color: [255, 127, 0, 1],
+          fill: [1, 1, 1, 1],
+          haloOpacity: 0.75,
+          fillOpacity: 0.25
         }
       });
 
-      view.ui.empty("top-left");
+      var highlightHover;
+
+      view.on("pointer-move",  (event) => {
+          view.hitTest(event).then((response) => {
+            if (highlightHover) {
+              highlightHover.remove();
+            }
+            if (response.results.length) {
+              var graphic = response.results[0].graphic;
+
+              view.whenLayerView(graphic.layer).then((layerView) => {
+                highlightHover = layerView.highlight(graphic);
+              });
+            }
+          });
+      });
+
+      /*view.ui.empty("top-left");*/
 
       map.ground.layers = [new ExaggeratedElevationLayer({
-        exaggerationBathymetry: 60,
-        exaggerationTopography: 40
+        exaggerationBathymetry: 40,
+        exaggerationTopography: 10
       })];
 
       const origin = new Point({
@@ -152,26 +171,19 @@
       const extremesLayer = new GeoJSONLayer({
         url: "extreme-points.geojson",
         elevationInfo: {
-          mode: "absolute-height",
-          offset: offset
+          mode: "relative-to-ground",
+          offset: /*offset*/ 400000, // In meters by default
         },
         renderer: {
           type: "simple",
           symbol: {
-            type: "point-3d",
+            type: "polygon-3d", // autocasts as new PointSymbol3D()
             symbolLayers: [{
-              type: "icon",
-              resource: { primitive: "circle" },
-              material: { color: [0, 0, 0, 0] },
-              outline: { color: [245, 99, 66, 1], size: 4 },
-              size: 10
-            }, {
-              type: "icon",
-              resource: { primitive: "circle" },
-              material: { color: [0, 0, 0, 0] },
-              outline: { color: [245, 99, 66, 1], size: 2 },
-              size: 30
-            }]
+              type: "fill",
+              material: { color: [255, 255, 255, 0.1] },
+              outline: { color: [255, 127, 0, 0.5], size: 2.5 },
+              castShadows: false,
+            }],
           }
         },
         popupTemplate: {
@@ -231,7 +243,7 @@
         if (intro) {
           document.getElementById("show-about").classList.remove("hidden");
           document.getElementById("show-intro").classList.add("hidden");
-          intro = false;
+          intro = false; 
         }
       });
 
@@ -240,8 +252,8 @@
       function rotate() {
         if (!view.interacting) {
           const camera = view.camera.clone();
-          camera.position.longitude -= 0.2;
-          view.goTo(camera, { animate: false });
+          camera.position.longitude -= 0.3;
+          view.goTo(camera, { animate: true });
           requestAnimationFrame(rotate);
         }
       }
