@@ -11,11 +11,12 @@ body,
 }
 
 body {
-  background: radial-gradient(#12bff2, #0269a1);
+  /*background: radial-gradient(#12bff2, #0269a1);*/
+  background: radial-gradient(circle, #fcff31 20%, #ff2600 100%);
 }
 
 #viewDiv canvas {
-  filter: saturate(1.2) drop-shadow(0 0 20px white);
+  filter: saturate(1.2) drop-shadow(0 0 40px rgb(255, 255, 255));
 }
 
 /* popup styling */
@@ -127,9 +128,14 @@ button.esri-icon-close {
 }
 
 #about {
-  color: white;
+  font-size: 1.5em;
+  font-weight: bold;
+  white-space:pre-wrap;
+  text-align: right;
+  color: rgba(255, 255, 255, 0.795);
   box-shadow: none;
   cursor: pointer;
+  word-wrap: break-word;
 }
 
 .hidden {
