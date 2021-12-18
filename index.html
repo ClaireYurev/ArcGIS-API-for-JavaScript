@@ -55,13 +55,13 @@
         url: "extreme-points.geojson",
         elevationInfo: {
           mode: "relative-to-ground",
-          offset: /*offset*/ 400000, // In meters by default
+          offset: /*offset*/ 400000,  // Offset in meters by default
         },
         
         renderer: {
           type: "simple",
           symbol: {
-            type: "polygon-3d", // autocasts as new PointSymbol3D()
+            type: "polygon-3d",  // Autocasts as new PointSymbol3D()
             symbolLayers: [{
               type: "fill",
               material: { color: [255, 255, 255, 0.1] },
